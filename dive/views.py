@@ -800,7 +800,6 @@ def get_user_images(request, app, module, account_id):
     return JsonResponse(schemas, safe=False)
 
 
-
 from openai import OpenAI
 @api_view(["GET"])
 def medical_check(request, app, module, obj_type, account_id):
@@ -808,7 +807,7 @@ def medical_check(request, app, module, obj_type, account_id):
     import boto3
     templates = Template.objects.filter(module=module, app=app,obj_type=obj_type, deleted=False, account_id=account_id)
     schema= json.loads(templates[0].schema)
-
+ 
     AWS_S3_BUCKET_NAME = env.str('AWS_S3_BUCKET_NAME', default='') or os.environ.get('AWS_S3_BUCKET_NAME', '')
     AWS_ADMIN_ACCESS_KEY = env.str('AWS_ADMIN_ACCESS_KEY', default='') or os.environ.get('AWS_ADMIN_ACCESS_KEY', '')
     AWS_ADMIN_SECRET_KEY = env.str('AWS_ADMIN_SECRET_KEY', default='') or os.environ.get('AWS_ADMIN_SECRET_KEY', '')
