@@ -26,6 +26,7 @@ from dive.api.utils import send_message_socket
 from time import sleep
 from django.shortcuts import render
 import os
+import base64
 from pathlib import Path
 
 env = environ.Env()
@@ -787,5 +788,106 @@ def upload_file(request):
     return HttpResponse(status=204)
 
 
+@api_view(["GET"])
+def get_user_images(request, app, module, account_id):
+    templates = Template.objects.filter(module=module, app=app, deleted=False, account_id=account_id)
+    schemas = []
+    for template in templates:
+        print(template.schema)
+        schemas.append({'template_id': template.id, 'app': app, 'module': module, 'obj_type': template.obj_type,
+                        'schema': json.loads(template.schema) if template.schema else None,
+                        'chunking_type': json.loads(template.chunking_type) if template.chunking_type else None})
+    return JsonResponse(schemas, safe=False)
 
 
+
+from openai import OpenAI
+@api_view(["GET"])
+def medical_check(request, app, module, obj_type, account_id):
+    client = OpenAI()
+    import boto3
+    templates = Template.objects.filter(module=module, app=app,obj_type=obj_type, deleted=False, account_id=account_id)
+    schema= json.loads(templates[0].schema)
+
+    AWS_S3_BUCKET_NAME = env.str('AWS_S3_BUCKET_NAME', default='') or os.environ.get('AWS_S3_BUCKET_NAME', '')
+    AWS_ADMIN_ACCESS_KEY = env.str('AWS_ADMIN_ACCESS_KEY', default='') or os.environ.get('AWS_ADMIN_ACCESS_KEY', '')
+    AWS_ADMIN_SECRET_KEY = env.str('AWS_ADMIN_SECRET_KEY', default='') or os.environ.get('AWS_ADMIN_SECRET_KEY', '')
+    AWS_S3_BUCKET_REGION = env.str('AWS_S3_BUCKET_REGION', default='') or os.environ.get('AWS_S3_BUCKET_REGION', '')
+    s3 = boto3.resource('s3',aws_access_key_id=AWS_ADMIN_ACCESS_KEY,
+                        aws_secret_access_key=AWS_ADMIN_SECRET_KEY,
+                        region_name=AWS_S3_BUCKET_REGION)
+    obj = s3.Object(AWS_S3_BUCKET_NAME, schema["file_url"])
+    base64_image = base64.b64encode(obj.get()['Body'].read()).decode("utf-8")
+    mime_type=schema["file_url"].split(".")[1]
+
+    messages = [
+                   {
+                       "role": "user",
+                       "content": [
+                           {"type": "text", "text": "What is wrong with the foot in this image?"},
+                           {
+                               "type": "image_url",
+                               "image_url": {
+                                   "url": f"data:image/{mime_type};base64,{base64_image}"
+                               }
+                           },
+                       ],
+                   }
+               ]
+
+    response = client.chat.completions.create(
+        model="gpt-4-vision-preview",
+        messages=messages,
+        max_tokens=300,
+    )
+    print(response.choices[0].message.content )
+    
+    messages.append({
+        "role": "assistant",
+        "content": [
+            { "type": "text", "text": response.choices[0].message.content }
+        ]
+    })
+
+    messages.append({
+        "role": "user",
+        "content": [
+            { "type": "text", "text": "Can you recommend me some treatments for each of the issues you described?"}
+        ]
+    })
+
+    response2 = client.chat.completions.create(
+        model="gpt-4-vision-preview",
+        messages=messages,
+        max_tokens=300,
+    )
+
+    result={'file_url': schema["file_url"], 'diagnosis':response.choices[0].message.content,'suggestion':response2.choices[0].message.content}
+    return  JsonResponse(result, safe=False)
+
+
+from openai import OpenAI
+@api_view(["GET"])
+def interpret_image(request):
+    client = OpenAI()
+    messages = [
+        {
+            "role": "user",
+            "content": [
+                {"type": "text", "text": "What is wrong with the foot in this image?"},
+                {
+                    "type": "image_url",
+                    "image_url": {
+                        "url": "https://docs.diveapi.co/images/toe.png",
+                    }
+                }
+            ],
+        }
+    ]
+    response = client.chat.completions.create(
+        model="gpt-4-vision-preview",
+        messages=messages,
+        max_tokens=300,
+    )
+    print(response)
+    return HttpResponse(status=204)

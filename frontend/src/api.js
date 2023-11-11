@@ -141,3 +141,25 @@ export function setupVector() {
         .then(res => res.data);
 }
 
+
+
+export function onDownloadImage(url) {
+    return fetch(`${serviceUrl}file/v1/image/download`, {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        fileUrl: url
+      })
+    }).then((response) => response.blob())
+  
+      .catch((error) => console.log(error));
+  }
+
+
+  export function queryCondition(app, module, obj_type, account_id) {
+
+    return axios.get(`${serviceUrl}/image/check/${app}/${module}/${obj_type}/${account_id}`)
+        .then(res => res.data);
+}

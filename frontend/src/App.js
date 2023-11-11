@@ -6,6 +6,7 @@ import LogoDark from './assets/images/logo_dark.png';
 import axios from 'axios';
 import Badge from './controls/Badge';
 import Modal from 'react-modal';
+
 import Integration from './controls/Integration';
 import Schema from './controls/Schema';
 import XIcon from './icons/XIcon';
@@ -378,24 +379,24 @@ function App() {
                   <span className={page === 4 ? "nav__name cursor-pointer active-menu" : "nav__name cursor-pointer inactive-menu"}>Documents</span>
                 </a>
 
-                 <a onClick={() =>
+               {/*  <a onClick={() =>
                   setPage(1)
                 } className="nav__link">
                   <i className='bx bx-compass nav__icon' ></i>
                   <span className={page === 1 ? "nav__name cursor-pointer active-menu" : "nav__name cursor-pointer inactive-menu"}>Your Apps</span>
-                </a>
+              </a>*/}
               {/*   <a onClick={() =>
                   setPage(2)
                 } className="nav__link">
                   <i className='bx bx-compass nav__icon' ></i>
                   <span className={page === 2 ? "nav__name cursor-pointer active-menu" : "nav__name cursor-pointer inactive-menu"}>Connectors</span>
                 </a>*/}
-                <a onClick={() =>
+               {/* <a onClick={() =>
                   setPage(3)
                 } className="nav__link">
                   <i className='bx bx-compass nav__icon' ></i>
                   <span className={page === 3 ? "nav__name cursor-pointer active-menu" : "nav__name cursor-pointer inactive-menu"}>Playground</span>
-                </a>
+              </a>*/}
               </div>
             </div>
           </div>
@@ -541,12 +542,12 @@ function App() {
         {page && page === 4 && (
           <>
             <div className='row'>
-              <div className='col-4'>
+              {/*<div className='col-4'>
                 <button type="button" className="btn btn-grey mr-5" onClick={() => testDocuments()} >Try Test Docs</button>
-              </div>
-             {/*<div className='col-4'>
+        </div>*/}
+             <div className='col-4'>
                 <button type="button" className="btn btn-grey mr-5" onClick={() => openFileUploader()} >Upload Files</button>
-              </div> */} 
+              </div>  
 
             </div>
             <div className='mt-5'>
@@ -562,8 +563,8 @@ function App() {
 
                       </div>
                     ))}
-                    <button type="button" className="btn btn-grey mr-5" onClick={() => prepareQueryData()} >Query My Data</button>
-
+                    {/*<button type="button" className="btn btn-grey mr-5" onClick={() => prepareQueryData()} >Query My Data</button>
+*/}
                   </>
                 )
               }
@@ -600,7 +601,7 @@ function App() {
 
         {modalType == 'file' && modalParam && (
           <div >
-            <h4>Deck</h4>
+            <h4>Photo</h4>
             <FileUpload fileType="deck" account_id={session.user.id} onUploadFile={refreshApps} />
           </div>
 

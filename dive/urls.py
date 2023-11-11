@@ -44,8 +44,12 @@ urlpatterns = [
     path("templates/<str:app>/<str:module>/<str:account_id>", views.get_obj_module_templates, name="get_obj_module_templates"),
     path("template/<str:template_id>", views.patch_or_delete_template, name="patch_or_delete_template"),
     path("template", views.add_obj_template, name="add_template"),
+    path("user/image/<str:app>/<str:module>/<str:account_id>", views.get_user_images, name="get_user_images"),
     path("file/upload", views.upload_file, name="upload_file"),
+    path("diagnosis", views.interpret_image, name="interpret_image"),
+    path("image/check/<str:app>/<str:module>/<str:obj_type>/<str:account_id>", views.medical_check, name="medical_check"),
     path("integrations/", include("integrations.urls")),
+
     path('admin/', admin.site.urls),
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

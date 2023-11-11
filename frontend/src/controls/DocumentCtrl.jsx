@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 
-import { getAppTemplates, clearData, syncConnectorData } from '../api';
+import { getAppTemplates, clearData, syncConnectorData, queryCondition } from '../api';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { ChunkingTypes } from '../references';
@@ -52,6 +52,14 @@ export default function DocumentCtrl({ app, account_id, connector_id, onSchemaEd
       
     }
 
+    function checkMedicalCondition(app, module, obj_type, account_id) {
+
+        queryCondition(app, module, obj_type, account_id).then(data => {
+            console.log(data);
+        })
+      
+    }
+
     function reloadData(){
         setLoading(true);
         if (app === 'example') {
@@ -80,23 +88,26 @@ export default function DocumentCtrl({ app, account_id, connector_id, onSchemaEd
                 <div className='col-3'>
                     <span> {app} </span>
                 </div>
-                <div className='col-3'>
+                <div className='col-6'>
                     {objTypes && objTypes.map(a => (
 
                         <div key={a}  >
                             <span>{a}</span>
+                            <button type="button" className="btn btn-blue-short ml-5" onClick={() => checkMedicalCondition(app,'filestorage',a,account_id)} >Check</button>
+           
                         </div>
+                        
                     ))}
                
                     <span className='red-text'>{error}</span>
                 </div>
 
-                <div className='col-2'>
-                    <button type="button" className="btn btn-blue-short ml-5" onClick={() => handleReloadData()} >Reload</button>
+              {/* <div className='col-2'>
+                    <button type="button" className="btn btn-blue-short ml-5" onClick={() => handleReloadData()} >Check</button>
                 </div>
                 <div className='col-2'>
                     <button type="button" className="btn btn-blue-short ml-5" onClick={() => onSchemaEdit(app)} >Edit</button>
-                </div>
+                    </div> */} 
                 <div className='col-2'>
 
                     <PulseLoader color="#2598d6" loading={loading} />
