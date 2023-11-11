@@ -1,0 +1,41 @@
+{
+  "website": "Website",
+  "name": "Name",
+  "description": "Description",
+  "number_of_employees": "NumberOfEmployees",
+  "industry": "Industry",
+  "owner_id": "OwnerId",
+  "last_activity_at": "LastActivityDate",
+  "addresses": [
+    {
+      "street_1": "BillingStreet",
+      "street_2": "",
+      "city":  "BillingCity",
+      "state": "BillingState",
+      "postal_code": "BillingPostalCode",
+      "country": "BillingCountry",
+      "address_type": "${constant.Billing}"
+    },
+    {
+      "street_1": "ShippingStreet",
+      "street_2": "",
+      "city":  "ShippingCity",
+      "state": "ShippingState",
+      "postal_code": "ShippingPostalCode",
+      "country": "ShippingCountry",
+      "address_type": "${constant.Shipping}"
+    }
+  ],
+  "phone_numbers": [
+    {
+      "phone_number": "Phone",
+      "phone_number_type": "${constant.Work}"
+    },
+    {
+      "phone_number": "Fax",
+      "phone_number_type": "${constant.Fax}"
+    }
+  ],
+  "created_at":"CreatedDate",
+  "updated_at":"LastModifiedDate"
+}
